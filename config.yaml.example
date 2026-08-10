@@ -1,0 +1,93 @@
+app_name: financial-anomaly-detection
+environment: dev
+
+postgres:
+  host: localhost
+  port: 5432
+  user: postgres
+  password: postgres
+  dbname: transactions
+  schema_name: public
+
+clickhouse:
+  host: localhost
+  port: 8123
+  database: market_data
+  user: default
+  password: ""
+
+iforest:
+  n_estimators: 200
+  contamination: 0.001
+  random_state: 42
+
+lstm:
+  sequence_length: 24
+  hidden_units:
+    - 64
+    - 32
+  epochs: 20
+  batch_size: 64
+  learning_rate: 0.001
+  reconstruction_error_percentile: 99.0
+
+dbscan:
+  eps_km: 5.0
+  min_samples: 5
+
+features:
+  windows:
+    5min: "5min"
+    1h: "1h"
+    1d: "1D"
+    7d: "7D"
+    30d: "30D"
+  high_risk_merchant_categories:
+    - casino
+    - gambling
+    - crypto_exchange
+    - money_transfer
+    - wire_transfer
+    - jewelry
+    - electronics
+    - adult_content
+  impossible_travel_speed_kmh: 900.0
+  night_start_hour: 0
+  night_end_hour: 6
+
+calibration:
+  objective: f1
+  min_precision: 0.80
+  target_recall: 0.60
+  max_alerts_per_day: 100
+  search_grid:
+    - 0.50
+    - 0.60
+    - 0.70
+    - 0.80
+    - 0.85
+    - 0.90
+    - 0.95
+    - 0.975
+    - 0.99
+    - 0.995
+    - 0.999
+
+logging:
+  level: INFO
+  format: "%(asctime)s | %(levelname)s | %(name)s | %(message)s"
+  logfile: logs/anomaly_detection.log
+
+training:
+  n_jobs: 1
+  random_state: 42
+  use_lstm: true
+  use_dbscan: true
+  use_isolation_forest: true
+  use_statistical: true
+  use_ensemble: true
+
+data_dir: data
+artifact_dir: artifacts
+feature_store_dir: feature_store
+report_dir: reports
